@@ -14,7 +14,10 @@ describe('Wallet', () => {
     const wallet = Wallet.create('wallet-1', 'BRL');
 
     wallet.credit(
-      Money.from({ amount: '100.00', currency: 'BRL' }),
+      Money.from({
+        amount: '100.00',
+        currency: 'BRL',
+      }),
     );
 
     expect(wallet.getBalance().toString()).toBe('100.00');
@@ -24,11 +27,17 @@ describe('Wallet', () => {
     const wallet = Wallet.create('wallet-1', 'BRL');
 
     wallet.credit(
-      Money.from({ amount: '100.00', currency: 'BRL' }),
+      Money.from({
+        amount: '100.00',
+        currency: 'BRL',
+      }),
     );
 
     wallet.debit(
-      Money.from({ amount: '30.00', currency: 'BRL' }),
+      Money.from({
+        amount: '30.00',
+        currency: 'BRL',
+      }),
     );
 
     expect(wallet.getBalance().toString()).toBe('70.00');
@@ -39,8 +48,48 @@ describe('Wallet', () => {
 
     expect(() =>
       wallet.debit(
-        Money.from({ amount: '10.00', currency: 'BRL' }),
+        Money.from({
+          amount: '10.00',
+          currency: 'BRL',
+        }),
       ),
     ).toThrow('Saldo insuficiente');
+  });
+
+  it('não deve aceitar crédito em moeda diferente', () => {
+    const wallet = Wallet.create('wallet-1', 'BRL');
+
+    expect(() =>
+      wallet.credit(
+        Money.from({
+          amount: '10.00',
+          currency: 'USD',
+        }),
+      ),
+    ).toThrow('Moeda incompatível com a carteira');
+
+    expect(wallet.getBalance().toString()).toBe('0.00');
+  });
+
+  it('não deve aceitar débito em moeda diferente', () => {
+    const wallet = Wallet.create('wallet-1', 'BRL');
+
+    wallet.credit(
+      Money.from({
+        amount: '20.00',
+        currency: 'BRL',
+      }),
+    );
+
+    expect(() =>
+      wallet.debit(
+        Money.from({
+          amount: '10.00',
+          currency: 'USD',
+        }),
+      ),
+    ).toThrow('Moeda incompatível com a carteira');
+
+    expect(wallet.getBalance().toString()).toBe('20.00');
   });
 });

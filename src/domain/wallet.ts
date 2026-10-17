@@ -1,5 +1,4 @@
-
-import { Money } from './money';
+import { Money } from './money.js';
 
 export class Wallet {
   private constructor(
@@ -20,6 +19,10 @@ export class Wallet {
   }
 
   debit(amount: Money): void {
+    if (this.balance.currency !== amount.currency) {
+      throw new Error('Moeda incompatível com a carteira');
+    }
+
     if (!amount.isPositive()) {
       throw new Error('O débito deve ser maior que zero');
     }
@@ -32,6 +35,10 @@ export class Wallet {
   }
 
   credit(amount: Money): void {
+    if (this.balance.currency !== amount.currency) {
+      throw new Error('Moeda incompatível com a carteira');
+    }
+
     if (!amount.isPositive()) {
       throw new Error('O crédito deve ser maior que zero');
     }
